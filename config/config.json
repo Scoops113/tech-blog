@@ -1,0 +1,21 @@
+{
+    "development": {
+      "username": "Stephen C",
+      "password": "password",
+      "database": "tech_blog_db",
+      "host": "localhost",
+      "dialect": "postgres"
+    },
+    "test": {
+      "username": "Stephen C",
+      "password": "password",
+      "database": "tech_blog_db_test",
+      "host": "localhost",
+      "dialect": "postgres"
+    },
+    "production": {
+      "use_env_variable": "DATABASE_URL",
+      "dialect": "postgres"
+    }
+  }
+  
