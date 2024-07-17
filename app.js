@@ -35,9 +35,7 @@ app.use(session({
   store: sessionStore,
 }));
 
-// View engine setup
-// app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
-// app.set('view engine', 'handlebars');
+
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
