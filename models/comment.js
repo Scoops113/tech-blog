@@ -1,28 +1,42 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize({
-  dialect: 'postgres',
-  storage: 'session',
-  define: {
-    timestamps: false,
-  },
-});
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../config/connection');
 
-const Comment = sequelize.define('Comment', {
-  content: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-  },
-  postId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-});
+class Comment extends Model {}
 
-Comment.belongsTo(User, { foreignKey: 'userId' });
-Comment.belongsTo(Post, { foreignKey: 'postId' });
+Comment.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    comment_text: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'user',
+        key: 'id',
+      },
+    },
+    post_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'post',
+        key: 'id',
+      },
+    },
+  },
+  {
+    sequelize,
+    timestamps: true,
+    freezeTableName: true,
+    underscored: true,
+    modelName: 'comment',
+  }
+);
 
 module.exports = Comment;
