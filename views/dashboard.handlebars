@@ -1,0 +1,14 @@
+<h1>Welcome to Your Dashboard, {{session.username}}!</h1>
+
+{{#if userPosts.length}}
+  {{#each userPosts}}
+    <article class="post">
+      <h2>{{title}}</h2>
+      <p>Posted on {{createdAt}}</p>
+      <p>{{content}}</p>
+      <a href="/posts/{{id}}">View post</a>
+    </article>
+  {{/each}}
+{{else}}
+  <p>No posts yet. <a href="/posts/new">Create one now!</a></p>
+{{/if}}
