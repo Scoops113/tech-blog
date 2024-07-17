@@ -1,0 +1,22 @@
+<article class="post">
+  <h2>{{post.title}}</h2>
+  <p>Posted by {{post.User.username}} on {{post.createdAt}}</p>
+  <p>{{post.content}}</p>
+</article>
+
+{{#if session.userId}}
+  <form action="/posts/{{post.id}}/comment" method="POST">
+    <label for="content">Add a comment:</label>
+    <textarea id="content" name="content" rows="3" required></textarea>
+    <button type="submit">Submit</button>
+  </form>
+{{else}}
+  <p><a href="/auth/login">Login</a> to add a comment.</p>
+{{/if}}
+
+{{#each post.Comments}}
+  <div class="comment">
+    <p>Comment by {{User.username}} on {{createdAt}}</p>
+    <p>{{content}}</p>
+  </div>
+{{/each}}

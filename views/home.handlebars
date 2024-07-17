@@ -1,0 +1,8 @@
+{{#each posts}}
+  <article class="post">
+    <h2>{{title}}</h2>
+    <p>Posted by {{User.username}} on {{createdAt}}</p>
+    <p>{{content}}</p>
+    <a href="/posts/{{id}}">Read more...</a>
+  </article>
+{{/each}}
