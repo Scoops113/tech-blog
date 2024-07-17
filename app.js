@@ -3,7 +3,8 @@ const session = require('express-session');
 const path = require('path');
 const Sequelize = require('sequelize');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
-const bcrypt = require('bcryptjs');
+const exphbs = require('express-handlebars'); 
+const hbs = exphbs.create({});
 
 const app = express();
 
@@ -15,7 +16,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Session setup with Sequelize
 const sequelize = new Sequelize({
   dialect: 'postgres',
-  storage: 'session',
+  username: 'Stephen C',
+  password: 'password',
+  database: 'tech_blog_db',
+  host: 'localhost',
   define: {
     timestamps: false,
   },
@@ -31,7 +35,14 @@ app.use(session({
   store: sessionStore,
 }));
 
-// Database connection
+// View engine setup
+// app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+// app.set('view engine', 'handlebars');
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
+
+
+// Database connection and models setup
 const { User, Post, Comment } = require('./models');
 sequelize.sync();
 
