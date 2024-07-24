@@ -1,62 +1,81 @@
 const express = require('express');
-const session = require('express-session');
 const path = require('path');
-const Sequelize = require('sequelize');
+const session = require('express-session');
+const exphbs = require('express-handlebars');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
-const exphbs = require('express-handlebars'); 
-const hbs = exphbs.create({});
+const { sequelize } = require('./models');
+const morgan = require('morgan'); // For HTTP request logging
 
 const app = express();
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Session setup with Sequelize
-const sequelize = new Sequelize({
-  dialect: 'postgres',
-  username: 'Stephen C',
-  password: 'password',
-  database: 'tech_blog_db',
-  host: 'localhost',
-  define: {
-    timestamps: false,
+// Handlebars setup
+const hbs = exphbs.create({
+  defaultLayout: 'main',
+  extname: '.handlebars',
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true,
   },
 });
+
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, 'views'));
+
+// Middleware for parsing request bodies
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Middleware to serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// HTTP request logging
+app.use(morgan('combined'));
+
+// Session store setup
 const sessionStore = new SequelizeStore({
   db: sequelize,
 });
 
 app.use(session({
-  secret: 'your-secret-key',
+  secret: 'your_secret_key', // Replace with a strong secret
   resave: false,
   saveUninitialized: false,
   store: sessionStore,
 }));
 
+// Route imports
+const postRoutes = require('./routes/posts');
+const authRoutes = require('./routes/auth');
+const dashboardRoutes = require('./routes/dashboard');
+const homeRoutes = require('./routes/index');
 
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
+// Middleware to ensure user is authenticated for protected routes
+app.use((req, res, next) => {
+  if (req.session.userId || req.path === '/auth/login' || req.path === '/auth/register' || req.path === '/') {
+    return next();
+  }
+  res.redirect('/auth/login');
+});
 
+// Route definitions
+app.use('/', homeRoutes);
+app.use('/posts', postRoutes);
+app.use('/auth', authRoutes);
+app.use('/dashboard', dashboardRoutes);
 
-// Database connection and models setup
-const { User, Post, Comment } = require('./models');
-sequelize.sync();
+// Error handling
+app.use((req, res, next) => {
+  res.status(404).send('404 Not Found');
+});
 
-// Routes
-const indexRouter = require('./routes/index');
-const authRouter = require('./routes/auth');
-const dashboardRouter = require('./routes/dashboard');
-const postsRouter = require('./routes/posts');
+app.use((err, req, res, next) => {
+  console.error('Error stack trace:', err.stack); // Log error stack trace
+  res.status(500).send('500 Internal Server Error');
+});
 
-app.use('/', indexRouter);
-app.use('/auth', authRouter);
-app.use('/dashboard', dashboardRouter);
-app.use('/posts', postsRouter);
-
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+// Sync the database and start the server
+sequelize.sync({ force: false }).then(() => {
+  app.listen(process.env.PORT || 3000, () => {
+    console.log(`Server is running at http://localhost:${process.env.PORT || 3000}`);
+  });
 });

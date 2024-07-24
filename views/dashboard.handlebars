@@ -1,14 +1,34 @@
-<h1>Welcome to Your Dashboard, {{session.username}}!</h1>
-
-{{#if userPosts.length}}
-  {{#each userPosts}}
-    <article class="post">
-      <h2>{{title}}</h2>
-      <p>Posted on {{createdAt}}</p>
-      <p>{{content}}</p>
-      <a href="/posts/{{id}}">View post</a>
-    </article>
-  {{/each}}
-{{else}}
-  <p>No posts yet. <a href="/posts/new">Create one now!</a></p>
-{{/if}}
+<main>
+  <h1>Your Posts</h1>
+  <a href="/dashboard/new">Create New Post</a>
+  {{#if posts.length}}
+    <ul>
+      {{#each posts}}
+        <li>
+          <h2><a href="/posts/{{this.id}}">{{this.title}}</a></h2>
+          <p>By {{this.User.username}} on {{this.createdAt}}</p>
+          {{#if this.Comments.length}}
+            <h3>Comments:</h3>
+            <ul>
+              {{#each this.Comments}}
+                <li>{{this.User.username}}: {{this.content}}</li>
+              {{/each}}
+            </ul>
+          {{else}}
+            <p>No comments yet.</p>
+          {{/if}}
+          <form action="/posts/delete/{{this.id}}" method="post">
+            <button type="submit">Delete</button>
+          </form>
+          <form action="/posts/update/{{this.id}}" method="post">
+            <input type="hidden" name="title" value="{{this.title}}">
+            <textarea name="content">{{this.content}}</textarea>
+            <button type="submit">Update</button>
+          </form>
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <p>No posts to display</p>
+  {{/if}}
+</main>

@@ -3,26 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CMS Blog</title>
+  <title>CMS Blog Site</title>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
   <header>
-    <nav>
-      <ul>
-        <li><a href="/">Home</a></li>
-        {{#if session.userId}}
-          <li><a href="/dashboard">Dashboard</a></li>
-          <li><a href="/auth/logout">Logout</a></li>
-        {{else}}
-          <li><a href="/auth/login">Login</a></li>
-          <li><a href="/auth/signup">Signup</a></li>
-        {{/if}}
-      </ul>
-    </nav>
+    {{#if user}}
+      <nav>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/">Homepage</a>
+        <form action="/auth/logout" method="post">
+          <button type="submit">Logout</button>
+        </form>
+      </nav>
+    {{else}}
+      <nav>
+        <a href="/">Homepage</a>
+        <a href="/auth/login">Login</a>
+        <a href="/auth/register">Sign Up</a>
+      </nav>
+    {{/if}}
   </header>
+
   <main>
     {{{body}}}
   </main>
+
+  <footer>
+    <p>&copy; 2024 CMS Blog Site</p>
+  </footer>
 </body>
 </html>

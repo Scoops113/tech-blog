@@ -1,39 +1,43 @@
 const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../config/connection');
 
-class Post extends Model {}
+module.exports = (sequelize) => {
+  class Post extends Model {
+    static associate(models) {
+      Post.belongsTo(models.User, { foreignKey: 'user_id' });
+      Post.hasMany(models.Comment, { foreignKey: 'post_id' });
+    }
+  }
 
-Post.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    content: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    user_id: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'user',
-        key: 'id',
+  Post.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      content: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      user_id: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'User',
+          key: 'id',
+        },
       },
     },
-  },
-  {
-    sequelize,
-    timestamps: true,
-    freezeTableName: true,
-    underscored: true,
-    modelName: 'post',
-  }
-);
+    {
+      sequelize,
+      modelName: 'Post',
+      timestamps: true,
+      underscored: true,
+    }
+  );
 
-module.exports = Post;
+  return Post;
+};

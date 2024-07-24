@@ -1,24 +1,23 @@
 {
-    "development": {
-      "username": "Stephen C",
-      "password": "password",
-      "database": "tech_blog_db",
-      "host": "127.0.0.1",
-      "dialect": "postgres"
-    },
-    "test": {
-      "username": "Stephen C",
-      "password": "password",
-      "database": "tech_blog_db",
-      "host": "127.0.0.1",
-      "dialect": "postgres"
-    },
-    "production": {
-      "username": "Stephen C",
-      "password": "password",
-      "database": "tech_blog_db",
-      "host": "127.0.0.1",
-      "dialect": "postgres"
-    }
+  "development": {
+    "username": "Stephen C",
+    "password": "password",
+    "database": "tech_blog_db",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "Stephen C",
+    "password": "password",
+    "database": "tech_blog_test_db",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "Stephen C",
+    "password": "password",
+    "database": "tech_blog_prod_db",
+    "host": "localhost",
+    "dialect": "postgres"
   }
-  
+}

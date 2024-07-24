@@ -1,30 +1,30 @@
 const express = require('express');
 const router = express.Router();
-const { Post, User, Comment } = require('../models'); 
+const { Post } = require('../models');
 
-router.get('/', async (req, res) => {
-  try {
-    const userId = req.session.userId; 
-    if (!userId) {
-      return res.status(401).send('Unauthorized');
-    }
-
-    
-    const posts = await Post.findAll({
-      where: { userId }, 
-      include: [
-        { model: User, attributes: ['username'] }, 
-        { model: Comment, attributes: ['id', 'comment_text', 'createdAt'] }, 
-      ],
-      order: [['createdAt', 'DESC']], 
-    });
-
-    
-    res.render('dashboard', { posts });
-  } catch (err) {
-    console.error('Error fetching dashboard data:', err);
-    res.status(500).send('Internal server error');
+// Middleware to ensure user is authenticated
+function ensureAuthenticated(req, res, next) {
+  if (req.session.userId) {
+    next();
+  } else {
+    res.redirect('/auth/login');
   }
+}
+
+// Render dashboard with user's posts
+router.get('/', ensureAuthenticated, async (req, res) => {
+  try {
+    const posts = await Post.findAll({ where: { userId: req.session.userId } });
+    res.render('dashboard', { posts, user: req.session.user });
+  } catch (error) {
+    console.error('Error loading dashboard:', error);
+    res.status(500).send('Error loading dashboard');
+  }
+});
+
+// Render new post creation page
+router.get('/new', ensureAuthenticated, (req, res) => {
+  res.render('new-post', { user: req.session.user });
 });
 
 module.exports = router;
