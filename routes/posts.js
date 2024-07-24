@@ -1,6 +1,42 @@
 const express = require('express');
-const { User, Post, Comment } = require('../models');
 const router = express.Router();
+const { User, Post, Comment } = require('../models');
+
+// Middleware to ensure the user is authenticated
+function ensureAuthenticated(req, res, next) {
+  if (req.session.userId) {
+    next();
+  } else {
+    res.redirect('/auth/login');
+  }
+}
+
+// Show the form to create a new post
+router.get('/new', ensureAuthenticated, (req, res) => {
+  res.render('new-post'); // Render the new post form
+});
+
+// Handle form submission for creating a new post
+router.post('/create', ensureAuthenticated, async (req, res) => {
+  const { title, content } = req.body;
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.redirect('/auth/login');
+  }
+
+  try {
+    if (!title || !content) {
+      return res.status(400).send('Title and content are required');
+    }
+
+    const newPost = await Post.create({ title, content, user_id: userId });
+    res.redirect('/dashboard'); // Redirect to the dashboard after creating the post
+  } catch (error) {
+    console.error('Error creating post:', error);
+    res.status(500).send('Error creating post');
+  }
+});
 
 // Get a specific post
 router.get('/:postId', async (req, res) => {
@@ -54,31 +90,6 @@ router.post('/:postId/comment', async (req, res) => {
   } catch (error) {
     console.error('Error creating comment:', error);
     res.status(500).send('Error creating comment');
-  }
-});
-
-// Create a new post
-router.post('/create', async (req, res) => {
-  const { title, content } = req.body;
-  const userId = req.session.userId;
-
-  if (!userId) {
-    return res.redirect('/auth/login');
-  }
-
-  try {
-    if (!title || !content) {
-      return res.status(400).send('Title and content are required');
-    }
-    
-    console.log('Creating post with data:', { title, content, user_id: userId });
-    const newPost = await Post.create({ title, content, user_id: userId });
-    
-    console.log('Post created successfully:', newPost);
-    res.redirect('/dashboard');
-  } catch (error) {
-    console.error('Error creating post:', error);
-    res.status(500).send('Error creating post');
   }
 });
 
