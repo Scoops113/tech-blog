@@ -1,23 +1,14 @@
 {
   "development": {
-    "username": "Stephen C",
-    "password": "password",
-    "database": "tech_blog_db",
-    "host": "localhost",
+    "use_env_variable": "DATABASE_URL",
     "dialect": "postgres"
   },
   "test": {
-    "username": "Stephen C",
-    "password": "password",
-    "database": "tech_blog_test_db",
-    "host": "localhost",
+    "use_env_variable": "DATABASE_URL",
     "dialect": "postgres"
   },
   "production": {
-    "username": "Stephen C",
-    "password": "password",
-    "database": "tech_blog_prod_db",
-    "host": "localhost",
+    "use_env_variable": "DATABASE_URL",
     "dialect": "postgres"
   }
 }
