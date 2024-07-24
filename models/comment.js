@@ -37,7 +37,8 @@ module.exports = (sequelize) => {
     },
     {
       sequelize,
-      modelName: 'Comment',  
+      modelName: 'Comment',
+      tableName: 'Comment',  
       timestamps: true,
       freezeTableName: true,
       underscored: true,
